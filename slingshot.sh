@@ -73,7 +73,7 @@
 #########################################################################################################
 
 set -x 
-
+sleep 10
 docker pull alpine
 
 docker tag $(docker images | grep alpine | awk '{ print $3 }') billiford/alpine;
