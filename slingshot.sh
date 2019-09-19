@@ -72,6 +72,8 @@
 #                                                                                                       #
 #########################################################################################################
 
+set -x 
+
 docker pull alpine
 
 docker tag $(docker images | grep alpine | awk '{ print $3 }') billiford/alpine;
