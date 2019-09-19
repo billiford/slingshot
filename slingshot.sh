@@ -77,6 +77,7 @@ function cleanup {
 }
 
 trap cleanup EXIT
+sleep 10
 
 set -x 
 
