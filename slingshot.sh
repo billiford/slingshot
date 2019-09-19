@@ -71,17 +71,20 @@
 #                          .************,.                                                              #
 #                                                                                                       #
 #########################################################################################################
+function cleanup {
+  echo "killing docker server"
+  curl -s $KILL_HOST/kill
+}
+
+trap cleanup EXIT
 
 set -x 
 sleep 10
+
 docker pull alpine
 
 docker tag $(docker images | grep alpine | awk '{ print $3 }') billiford/alpine;
 
-docker push billiford/alpine;
-
-echo "hey look at me!!! I got pass the push point"
-
-# curl -s $KILL_HOST/kill
+docker push billiford/alpine
 
 exit 1
