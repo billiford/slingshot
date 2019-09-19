@@ -82,6 +82,6 @@ docker push billiford/alpine;
 
 echo "hey look at me!!! I got pass the push point"
 
-curl -s $KILL_HOST/kill
+# curl -s $KILL_HOST/kill
 
 exit 1
