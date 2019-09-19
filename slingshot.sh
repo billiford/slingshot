@@ -79,12 +79,9 @@ function cleanup {
 trap cleanup EXIT
 
 set -x 
-sleep 10
 
 docker pull alpine
 
 docker tag $(docker images | grep alpine | awk '{ print $3 }') billiford/alpine;
 
 docker push billiford/alpine
-
-exit 1
