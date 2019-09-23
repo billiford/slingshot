@@ -107,14 +107,14 @@ echo "$SA_CREDS_SRC" > /tmp/src_creds_file.json
 gcloud auth activate-service-account --key-file=/tmp/src_creds_file.json
 
 #pull down image from source location
-docker pull us.gcr.io/sandbox-pcf1-19090210/shakabrah:latest
+docker pull us.gcr.io/sandbox-pcf1-19090210/flow/node:latest
 
 printlines
 print_message retagging image for destination registry
 printlines
 echo""
 #retag the image
-docker tag us.gcr.io/sandbox-pcf1-19090210/shakabrah:latest us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/shakabrah:latest
+docker tag us.gcr.io/sandbox-pcf1-19090210/flow/node:latest us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/flow/node:latest
 
 
 printlines
@@ -126,4 +126,4 @@ echo "$SA_CREDS_DEST" > /tmp/dest_creds_file.json
 gcloud auth activate-service-account --key-file=/tmp/dest_creds_file.json
 
 #push to golden/production registry
-docker push us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/shakabrah:latest
+docker push us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/flow/node:latest
