@@ -77,9 +77,16 @@ function cleanup {
 }
 
 trap cleanup EXIT
-sleep 10
+EXIT_CODE=""
+while [ "${EXIT_CODE}" -ne 0 ]
+do
+  telnet localhost 2375
+  EXIT_CODE=$?
+  sleep 2
+done
+# sleep 10
 
-set -x 
+set -x
 
 docker pull alpine
 
