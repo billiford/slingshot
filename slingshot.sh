@@ -83,7 +83,7 @@ i=0
 while [ "${EXIT_CODE}" -ne 0 ]
 do
   echo "Attempt $i to connect to docker daemon"
-  telnet localhost 2375
+  nc localhost 2375 -v
   EXIT_CODE=$?
   echo "The exit code from Attempt $i was ${EXIT_CODE}, sleeping for 2 seconds"
   i=$((i + 1))
