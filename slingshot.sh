@@ -77,12 +77,34 @@ function cleanup {
 }
 
 trap cleanup EXIT
-sleep 10
 
-set -x 
+EXIT_CODE=1
+i=0
+while [ "${EXIT_CODE}" -ne 0 ]
+do
+  echo "Attempt $i to connect to docker daemon"
+  nc localhost 2375 -v
+  EXIT_CODE=$?
+  echo "The exit code from Attempt $i was ${EXIT_CODE}, sleeping for 2 seconds"
+  i=$((i + 1))
+  sleep 2
+done
+# sleep 10
 
-docker pull alpine
+set -x
 
-docker tag $(docker images | grep alpine | awk '{ print $3 }') billiford/alpine;
 
-docker push billiford/alpine
+#activate gcloud service account
+#below syntax - for stdin, <<< to redirect echo to temp file
+gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
+
+#pull down image from source location
+docker pull us.gcr.io/sandbox-pcf1-19090210/shakabrah:latest
+
+#retag the image
+docker tag us.gcr.io/sandbox-pcf1-19090210/shakabrah:latest us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/shakabrah:latest
+
+gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_DEST)
+
+#push to golden/production registry
+docker push us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/shakabrah:latest
