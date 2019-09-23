@@ -104,7 +104,8 @@ printlines
 echo""
 #activate gcloud service account
 #below syntax - for stdin, <<< to redirect echo to temp file
-gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
+echo "$SA_CREDS_DEST" > /tmp/src_creds_file.json
+gcloud auth activate-service-account --key-file=/tmp/src_creds_file.json
 
 #pull down image from source location
 docker pull us.gcr.io/sandbox-pcf1-19090210/shakabrah:latest
@@ -122,7 +123,8 @@ print_message pushing docker image to destination registry
 printlines
 echo""
 
-gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_DEST)
+echo "$SA_CREDS_DEST" > /tmp/dest_creds_file.json
+gcloud auth activate-service-account --key-file=/tmp/dest_creds_file.json
 
 #push to golden/production registry
 docker push us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/shakabrah:latest
