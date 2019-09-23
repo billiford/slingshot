@@ -104,7 +104,7 @@ printlines
 echo""
 #activate gcloud service account
 #below syntax - for stdin, <<< to redirect echo to temp file
-echo "$SA_CREDS_DEST" > /tmp/src_creds_file.json
+echo "$SA_CREDS_SRC" > /tmp/src_creds_file.json
 gcloud auth activate-service-account --key-file=/tmp/src_creds_file.json
 
 #pull down image from source location
