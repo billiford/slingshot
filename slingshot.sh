@@ -77,11 +77,16 @@ function cleanup {
 }
 
 trap cleanup EXIT
-EXIT_CODE=""
+
+EXIT_CODE=1
+i=0
 while [ "${EXIT_CODE}" -ne 0 ]
 do
+  echo "Attempt $i to connect to docker daemon"
   telnet localhost 2375
   EXIT_CODE=$?
+  echo "The exit code from Attempt $i was ${EXIT_CODE}, sleeping for 2 seconds"
+  i=$((i + 1))
   sleep 2
 done
 # sleep 10
