@@ -90,12 +90,11 @@ EXIT_CODE=1
 i=0
 while [ "${EXIT_CODE}" -ne 0 ]
 do
+  sleep 2
   echo "Attempt $i to connect to docker daemon"
   nc localhost 2375 -v
   EXIT_CODE=$?
-  echo "The exit code from Attempt $i was ${EXIT_CODE}, sleeping for 2 seconds"
   i=$((i + 1))
-  sleep 2
 done
 
 printlines
