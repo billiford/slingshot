@@ -76,6 +76,14 @@ function cleanup {
   curl -s $KILL_HOST/kill
 }
 
+function printlines {
+  echo "------------------------------------------------------------------------------------------------"
+}
+
+function print_message {
+  echo "$* |"
+}
+
 trap cleanup EXIT
 
 EXIT_CODE=1
@@ -89,11 +97,11 @@ do
   i=$((i + 1))
   sleep 2
 done
-# sleep 10
 
-set -x
-
-
+printlines
+print_message pulling down docker image from source registry
+printlines
+echo""
 #activate gcloud service account
 #below syntax - for stdin, <<< to redirect echo to temp file
 gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
@@ -101,8 +109,18 @@ gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
 #pull down image from source location
 docker pull us.gcr.io/sandbox-pcf1-19090210/shakabrah:latest
 
+printlines
+print_message retagging image for destination registry
+printlines
+echo""
 #retag the image
 docker tag us.gcr.io/sandbox-pcf1-19090210/shakabrah:latest us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/shakabrah:latest
+
+
+printlines
+print_message pushing docker image to destination registry
+printlines
+echo""
 
 gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_DEST)
 
