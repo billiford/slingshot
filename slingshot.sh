@@ -99,16 +99,18 @@ check_docker_server_health() {
 }
 
 die() {
-  echo "$*" 1>&2
+  print_message "$*" 1>&2
   exit 1
 }
 
 need_var() {
-  test -z $1 || die "$1 does not exist, exiting script"
+  test -n $1 || die "$1 does not exist, exiting script"
 }
 
 trap cleanup EXIT
 
+print_message "checking if docker server is online"
+check_docker_server_health
 
 #SRC_IMG from one of the parameters from the spinnaker pipeline
 GOLDEN_REGISTRY=${GOLDEN_REGISTRY:-"np-platforms-gcr-thd"}
@@ -119,10 +121,6 @@ need_var "$SRC_IMG"
 need_var "$REGION"
 need_var "$GOLDEN_REGISTRY"
 need_var "$DEST_IMAGE"
-
-print_message "checking if docker server is online"
-
-check_docker_server_health
 
 print_message "pulling down docker image from source registry"
 
