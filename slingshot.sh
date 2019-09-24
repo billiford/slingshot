@@ -124,7 +124,7 @@ print_message "REGISTRY: $REGION"
 case "$REGION" in
   !(*gcr.io) )
     die "No suitable registry found in source image: $SRC_IMG";;
- esac
+esac
 
 need_var "$SRC_IMG"
 need_var "$REGION"
