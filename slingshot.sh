@@ -120,15 +120,9 @@ DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
 print_message "REGISTRY: $REGION"
 
 case "$REGION" in
-  *gcr.io )
-    echo "No suitable registry found in source image: $SRC_IMG";;
+  !*gcr.io )
+    die "No suitable registry found in source image: $SRC_IMG";;
  esac
-
-
-# if ! [[ $REGION =~ .*gcr.io.* ]]
-# then
-#   die "No suitable registry found in source image: $SRC_IMG"
-# fi
 
 need_var "$SRC_IMG"
 need_var "$REGION"
