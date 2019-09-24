@@ -79,9 +79,9 @@ cleanup() {
 }
 
 print_message() {
-  echo "----------------------------------------------------------"
+  echo "------------------------------------------"
   echo "$* |"
-  echo "----------------------------------------------------------"
+  echo "------------------------------------------"
   echo ""
 }
 
@@ -117,6 +117,12 @@ GOLDEN_REGISTRY=${GOLDEN_REGISTRY:-"np-platforms-gcr-thd"}
 REGION=${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
 DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
 
+case "$REGION" in
+  *gcr.io)
+    print_message "No suitable registry found in source image: $SRC_IMG, using default Region: us.gcr.io"
+    REGION="us.gcr.io";;
+esac
+
 need_var "$SRC_IMG"
 need_var "$REGION"
 need_var "$GOLDEN_REGISTRY"
@@ -131,7 +137,7 @@ gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
 
 #pull down image from source location
 #SRC_IMG from one of the parameters from the spinnaker pipeline
-docker pull $SRC_IMG
+docker pull $SRC_IMG || die "Could not pull image from docker repo"
 
 
 
