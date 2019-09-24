@@ -117,6 +117,7 @@ GOLDEN_REGISTRY=${GOLDEN_REGISTRY:-"np-platforms-gcr-thd"}
 REGION=${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
 DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
 
+print_message "The region used is $REGION"
 case "$REGION" in
   *gcr.io)
     die "No suitable registry found in source image: $SRC_IMG"
