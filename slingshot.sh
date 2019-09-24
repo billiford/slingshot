@@ -107,6 +107,8 @@ need_var() {
   test -n $1 || die "$1 does not exist, exiting script"
 }
 
+shopt -s extglob
+
 trap cleanup EXIT
 
 print_message "checking if docker server is online"
