@@ -73,19 +73,19 @@
 #                                                                                                       #
 #########################################################################################################
 
-function cleanup {
+cleanup() {
   echo "killing docker server"
   curl -s $KILL_HOST/kill
 }
 
-function print_message {
+print_message() {
   echo "----------------------------------------------------------"
   echo "$* |"
   echo "----------------------------------------------------------"
   echo ""
 }
 
-function check_docker_server_health {
+check_docker_server_health() {
   EXIT_CODE=1
   i=0
   while [ "${EXIT_CODE}" -ne 0 ]
@@ -98,18 +98,33 @@ function check_docker_server_health {
   done
 }
 
+die() {
+  echo "$*" 1>&2
+  exit 1
+}
+
+need_var() {
+  test -z $1 || die "$1 does not exist, exiting script"
+}
+
 trap cleanup EXIT
+
 
 #SRC_IMG from one of the parameters from the spinnaker pipeline
 GOLDEN_REGISTRY=${GOLDEN_REGISTRY:-"np-platforms-gcr-thd"}
 REGION=${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
 DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
 
-print_message checking if docker server is online
+need_var "$SRC_IMG"
+need_var "$REGION"
+need_var "$GOLDEN_REGISTRY"
+need_var "$DEST_IMAGE"
+
+print_message "checking if docker server is online"
 
 check_docker_server_health
 
-print_message pulling down docker image from source registry
+print_message "pulling down docker image from source registry"
 
 #activate gcloud service account
 #below syntax - for stdin, <<< to redirect echo to temp file
@@ -121,7 +136,6 @@ gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
 docker pull $SRC_IMG
 
 
-print_message retagging image for destination registry
 
 #construct Destination_image for retagging
 IFS='/'
@@ -133,10 +147,13 @@ do
   DEST_IMAGE="$DEST_IMAGE/$i"
 done
 
+
+
 #retag the image
+print_message "retagging image: $SRC_IMG for destination registry as: $DEST_IMAGE"
 docker tag "${SRC_IMG}" "${DEST_IMAGE}"
 
-print_message pushing docker image to destination registry
+print_message "pushing docker image to destination registry"
 
 # echo "$SA_CREDS_DEST" > /tmp/dest_creds_file.json
 gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_DEST)
