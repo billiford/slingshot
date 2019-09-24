@@ -120,7 +120,7 @@ DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
 print_message "REGISTRY: $REGION"
 
 case "$REGION" in
-  !*gcr.io )
+  !(*gcr.io) )
     die "No suitable registry found in source image: $SRC_IMG";;
  esac
 
