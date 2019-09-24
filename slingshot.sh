@@ -1,3 +1,4 @@
+#!/bin/bash
 #########################################################################################################
 #                                                                                                       #
 #                                                                                                       #
@@ -71,59 +72,74 @@
 #                          .************,.                                                              #
 #                                                                                                       #
 #########################################################################################################
+
 function cleanup {
   echo "killing docker server"
   curl -s $KILL_HOST/kill
 }
 
-function printlines {
-  echo "------------------------------------------------------------------------------------------------"
+function print_message {
+  echo "----------------------------------------------------------"
+  echo "$* |"
+  echo "----------------------------------------------------------"
+  echo ""
 }
 
-function print_message {
-  echo "$* |"
+function check_docker_server_health {
+  EXIT_CODE=1
+  i=0
+  while [ "${EXIT_CODE}" -ne 0 ]
+  do
+    sleep 2
+    echo "Attempt $i to connect to docker daemon"
+    nc localhost 2375 -v
+    EXIT_CODE=$?
+    i=$((i + 1))
+  done
 }
 
 trap cleanup EXIT
 
-EXIT_CODE=1
-i=0
-while [ "${EXIT_CODE}" -ne 0 ]
-do
-  sleep 2
-  echo "Attempt $i to connect to docker daemon"
-  nc localhost 2375 -v
-  EXIT_CODE=$?
-  i=$((i + 1))
-done
+#SRC_IMG from one of the parameters from the spinnaker pipeline
+GOLDEN_REGISTRY=${GOLDEN_REGISTRY:-"np-platforms-gcr-thd"}
+REGION=${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
+DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
 
-printlines
+print_message checking if docker server is online
+
+check_docker_server_health
+
 print_message pulling down docker image from source registry
-printlines
-echo""
+
 #activate gcloud service account
 #below syntax - for stdin, <<< to redirect echo to temp file
-echo "$SA_CREDS_SRC" > /tmp/src_creds_file.json
-gcloud auth activate-service-account --key-file=/tmp/src_creds_file.json
+# echo "$SA_CREDS_SRC" > /tmp/src_creds_file.json
+gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
 
 #pull down image from source location
-docker pull us.gcr.io/sandbox-pcf1-19090210/flow/node:latest
+#SRC_IMG from one of the parameters from the spinnaker pipeline
+docker pull $SRC_IMG
 
-printlines
+
 print_message retagging image for destination registry
-printlines
-echo""
+
+#construct Destination_image for retagging
+IFS='/'
+read -a IMG_ARR <<< "${SRC_IMG}"
+IFS=' '
+
+for i in ${IMG_ARR[@]:1}
+do
+  DEST_IMAGE="$DEST_IMAGE/$i"
+done
+
 #retag the image
-docker tag us.gcr.io/sandbox-pcf1-19090210/flow/node:latest us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/flow/node:latest
+docker tag "${SRC_IMG}" "${DEST_IMAGE}"
 
-
-printlines
 print_message pushing docker image to destination registry
-printlines
-echo""
 
-echo "$SA_CREDS_DEST" > /tmp/dest_creds_file.json
-gcloud auth activate-service-account --key-file=/tmp/dest_creds_file.json
+# echo "$SA_CREDS_DEST" > /tmp/dest_creds_file.json
+gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_DEST)
 
-#push to golden/production registry
-docker push us.gcr.io/np-platforms-gcr-thd/sandbox-pcf1-19090210/flow/node:latest
+#push to destination registry
+docker push "${DEST_IMAGE}"
