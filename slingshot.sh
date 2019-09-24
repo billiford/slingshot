@@ -80,7 +80,7 @@ cleanup() {
 
 print_message() {
   echo "------------------------------------------"
-  echo "$* |"
+  echo "$*"
   echo "------------------------------------------"
   echo ""
 }
@@ -119,8 +119,8 @@ DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
 
 case "$REGION" in
   *gcr.io)
-    print_message "No suitable registry found in source image: $SRC_IMG, using default Region: us.gcr.io"
-    REGION="us.gcr.io";;
+    die "No suitable registry found in source image: $SRC_IMG"
+    ;;
 esac
 
 need_var "$SRC_IMG"
