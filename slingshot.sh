@@ -120,7 +120,7 @@ DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
 
 test "$QUARANTINE" && REGION="us.gcr.io" || REGION="gcr.io" #${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
 
-DEST_RESGISTRY="$REGION/$DEST_PROJECT"
+DEST_REGISTRY="$REGION/$DEST_PROJECT"
 
 
 case "$SRC_IMG" in
