@@ -124,7 +124,7 @@ test "$QUARANTINE" && REGION="us.gcr.io" || REGION="gcr.io" #${REGION:-$(echo "$
 DEST_REGISTRY="$REGION/$DEST_PROJECT"
 
 case "$SRC_IMG" in
-  !(*gcr.io) )
+  !(*gcr.io*) )
     die "No suitable registry found in source image: $SRC_IMG";;
 
   !(*:*) )
@@ -133,7 +133,7 @@ esac
 
 need_var "$SRC_IMG"
 need_var "$REGION"
-need_var "$GOLDEN_REGISTRY"
+need_var "$DEST_REGISTRY"
 need_var "$DEST_IMAGE"
 need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH"
 need_var "$DEST_ACCOUNT_JSON_CREDS_PATH"
