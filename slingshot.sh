@@ -73,6 +73,7 @@
 #                                                                                                       #
 #########################################################################################################
 
+
 cleanup() {
   echo "killing docker server"
   curl -s $KILL_HOST/kill
@@ -115,15 +116,19 @@ print_message "checking if docker server is online"
 check_docker_server_health
 
 #SRC_IMG from one of the parameters from the spinnaker pipeline
-GOLDEN_REGISTRY=${GOLDEN_REGISTRY:-"np-platforms-gcr-thd"}
-REGION=${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
-DEST_IMAGE="$REGION/$GOLDEN_REGISTRY"
+DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
 
-print_message "REGISTRY: $REGION"
+test "$QUARANTINE" && REGION="us.gcr.io" || REGION="gcr.io" #${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
 
-case "$REGION" in
+DEST_RESGISTRY="$REGION/$DEST_PROJECT"
+
+
+case "$SRC_IMG" in
   !(*gcr.io) )
     die "No suitable registry found in source image: $SRC_IMG";;
+
+  !(*:*) )
+    die "No Tag found in source image: $SRC_IMG";;
 esac
 
 need_var "$SRC_IMG"
@@ -151,10 +156,10 @@ IFS=' '
 
 for i in ${IMG_ARR[@]:1}
 do
-  DEST_IMAGE="$DEST_IMAGE/$i"
+  DEST_IMAGE="$DEST_REGISTRY/$i"
 done
 
-
+test "$QUARANTINE" && DEST_IMAGE="$DEST_IMAGE-quarantine"
 
 #retag the image
 print_message "retagging image: $SRC_IMG for destination registry as: $DEST_IMAGE"
