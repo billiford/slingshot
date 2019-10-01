@@ -106,7 +106,7 @@ die() {
 }
 
 need_var() {
-  test -n $1 || die "$1 does not exist, exiting script"
+  test -n "$1" || die "$1 does not exist, exiting script"
 }
 
 shopt -s extglob
