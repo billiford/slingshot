@@ -122,6 +122,7 @@ DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
 test "$QUARANTINE" && REGION="us.gcr.io" || REGION="gcr.io" #${REGION:-$(echo "${SRC_IMG}" | cut -d/ -f1)}
 
 DEST_REGISTRY="$REGION/$DEST_PROJECT"
+DEST_IMAGE="$DEST_REGISTRY"
 
 case "$SRC_IMG" in
   !(*gcr.io*) )
@@ -137,6 +138,7 @@ need_var "$DEST_REGISTRY"
 need_var "$DEST_IMAGE"
 need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH"
 need_var "$DEST_ACCOUNT_JSON_CREDS_PATH"
+need_var "$SOMETHING_THAT_DOES_NOT_EXIST"
 
 print_message "pulling down docker image from source registry"
 
@@ -154,7 +156,7 @@ IFS=' '
 
 for i in ${IMG_ARR[@]:1}
 do
-  DEST_IMAGE="$DEST_REGISTRY/$i"
+  DEST_IMAGE="$DEST_IMAGE/$i"
 done
 
 test "$QUARANTINE" && DEST_IMAGE="$DEST_IMAGE-quarantine"
