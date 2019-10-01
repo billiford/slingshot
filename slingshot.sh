@@ -80,6 +80,7 @@ cleanup() {
 }
 
 print_message() {
+  echo ""
   echo "------------------------------------------"
   echo "$*"
   echo "------------------------------------------"
@@ -122,7 +123,6 @@ test "$QUARANTINE" && REGION="us.gcr.io" || REGION="gcr.io" #${REGION:-$(echo "$
 
 DEST_RESGISTRY="$REGION/$DEST_PROJECT"
 
-
 case "$SRC_IMG" in
   !(*gcr.io) )
     die "No suitable registry found in source image: $SRC_IMG";;
@@ -135,19 +135,17 @@ need_var "$SRC_IMG"
 need_var "$REGION"
 need_var "$GOLDEN_REGISTRY"
 need_var "$DEST_IMAGE"
+need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH"
+need_var "$DEST_ACCOUNT_JSON_CREDS_PATH"
 
 print_message "pulling down docker image from source registry"
 
 #activate gcloud service account
-#below syntax - for stdin, <<< to redirect echo to temp file
-# echo "$SA_CREDS_SRC" > /tmp/src_creds_file.json
-gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_SRC)
+gcloud auth activate-service-account --key-file="$SOURCE_ACCOUNT_JSON_CREDS_PATH"
 
 #pull down image from source location
 #SRC_IMG from one of the parameters from the spinnaker pipeline
 docker pull $SRC_IMG || die "Could not pull image from docker repo"
-
-
 
 #construct Destination_image for retagging
 IFS='/'
@@ -167,8 +165,7 @@ docker tag "${SRC_IMG}" "${DEST_IMAGE}"
 
 print_message "pushing docker image to destination registry"
 
-# echo "$SA_CREDS_DEST" > /tmp/dest_creds_file.json
-gcloud auth activate-service-account --key-file=-<<<$(echo $SA_CREDS_DEST)
+gcloud auth activate-service-account --key-file="$DEST_ACCOUNT_JSON_CREDS_PATH"
 
 #push to destination registry
 docker push "${DEST_IMAGE}"
