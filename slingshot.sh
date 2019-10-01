@@ -106,7 +106,7 @@ die() {
 }
 
 need_var() {
-  test -n "$1" || die "$1 does not exist, exiting script"
+  test -n "$1" || die "$2 does not exist, exiting script"
 }
 
 shopt -s extglob
@@ -132,13 +132,13 @@ case "$SRC_IMG" in
     die "No Tag found in source image: $SRC_IMG";;
 esac
 
-need_var "$SRC_IMG"
-need_var "$REGION"
-need_var "$DEST_REGISTRY"
-need_var "$DEST_IMAGE"
-need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH"
-need_var "$DEST_ACCOUNT_JSON_CREDS_PATH"
-need_var "$SOMETHING_THAT_DOES_NOT_EXIST"
+need_var "$SRC_IMG" "SRC_IMG"
+need_var "$REGION" "REGION"
+need_var "$DEST_REGISTRY" "DEST_REGISTRY"
+need_var "$DEST_IMAGE" "DEST_IMAGE"
+need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH" "SOURCE_ACCOUNT_JSON_CREDS_PATH"
+need_var "$DEST_ACCOUNT_JSON_CREDS_PATH" "DEST_ACCOUNT_JSON_CREDS_PATH"
+need_var "$SOMETHING_THAT_DOES_NOT_EXIST" "SOMETHING_THAT_DOES_NOT_EXIST"
 
 print_message "pulling down docker image from source registry"
 
