@@ -109,7 +109,7 @@ print_message "pulling down docker image from source registry"
 
 #activate gcloud service account
 gcloud auth activate-service-account --key-file="$SOURCE_ACCOUNT_JSON_CREDS_PATH"
-
+error_check "$?" "gcloud service-account auth"
 #pull down image from source location
 #SRC_IMG from one of the parameters from the spinnaker pipeline
 docker pull $SRC_IMG || die "Could not pull image from docker repo"
@@ -133,6 +133,6 @@ docker tag "${SRC_IMG}" "${DEST_IMAGE}"
 print_message "pushing docker image to destination registry"
 
 gcloud auth activate-service-account --key-file="$DEST_ACCOUNT_JSON_CREDS_PATH"
-
+error_check "$?" "gcloud service-account auth"
 #push to destination registry
 docker push "${DEST_IMAGE}"
