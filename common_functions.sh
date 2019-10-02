@@ -1,27 +1,9 @@
-cleanup() {
-  echo "killing docker server"
-  curl -s $KILL_HOST/kill
-}
-
 print_message() {
   echo ""
   echo "------------------------------------------"
   echo "$*"
   echo "------------------------------------------"
   echo ""
-}
-
-check_docker_server_health() {
-  EXIT_CODE=1
-  i=0
-  while [ "${EXIT_CODE}" -ne 0 ]
-  do
-    sleep 2
-    echo "Attempt $i to connect to docker daemon"
-    nc localhost 2375 -v
-    EXIT_CODE=$?
-    i=$((i + 1))
-  done
 }
 
 die() {
