@@ -137,7 +137,7 @@ test "$STAGING" && DEST_IMAGE="$DEST_IMAGE-staging"
 if ! [ $STAGING ]
 then
   STAGING_PROJECT=${STAGING_PROJECT:-"np-platforms-gcr-thd"}
-  STAGING_IMAGE="us.gcr.io/$STATING_PROJECT"
+  STAGING_IMAGE="us.gcr.io/$STAGING_PROJECT"
 
   #construct STAGING_image for retagging
   IFS='/'
