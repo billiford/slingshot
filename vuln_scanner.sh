@@ -33,4 +33,4 @@ gcloud beta container images describe "$QUARANTINE_IMAGE" --show-package-vulnera
 
 error_check "$?" "gcloud image describe"
 
-bash "$SCRIPT_LOC"/vulnerability_parser ./vulnerability_scan.json
+"$SCRIPT_LOC"/vulnerability_parser ./vulnerability_scan.json
