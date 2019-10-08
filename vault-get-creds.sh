@@ -6,6 +6,7 @@ need "curl"
 need "vault" #just for giggles
 
 need_var "$APPROLE_ID" "APPROLE_ID"
+need_var "$VAULT_ADDR" "VAULT_ADDR"
 need_var "$APPROLE_SECRET_ID" "APPROLE_SECRET_ID"
 need_var "$VAULT_SOURCE_ACCOUNT_PATH" "VAULT_SOURCE_ACCOUNT_PATH"
 need_var "$VAULT_SOURCE_ACCOUNT" "VAULT_SOURCE_ACCOUNT"
