@@ -18,3 +18,7 @@ need_var() {
 error_check() {
   test "$1" -ne 0 && die "$2 did not return a success code, exiting script"
 }
+
+need() {
+  which "$1" 1>/dev/null || apk add "$1" || die "$1"
+}

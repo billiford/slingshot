@@ -1,41 +1,18 @@
+SCRIPT_LOC=$(cd "$(dirname "$0")"; pwd -P)
+. $SCRIPT_LOC/common_functions.sh
 
-die() { echo "$*" 1>&2 ; exit 1; }
+need "jq"
+need "curl"
+need "vault" #just for giggles
 
-if [ -z "$APPROLE_ID" ]; then
-    die "vault approle ID APPROLE_ID needed to continue"
-fi
-
-if [ -z "$APPROLE_SECRET_ID" ]; then
-    die "vault approle secret ID APPROLE_SECRET_ID needed to continue"
-fi
-
-if [ -z "$VAULT_ADDR" ]; then
-    die "vault address VAULT_ADDR needed to continue"
-fi
-
-if [ -z "$VAULT_SOURCE_ACCOUNT_PATH" ]; then
-    die "vault source account path VAULT_SOURCE_ACCOUNT_PATH needed to continue"
-fi
-
-if [ -z "$VAULT_SOURCE_ACCOUNT" ]; then
-    die "vault source account VAULT_SOURCE_ACCOUNT needed to continue"
-fi
-
-if [ -z "$VAULT_SOURCE_ACCOUNT_FIELD" ]; then
-    die "vault source account field VAULT_SOURCE_ACCOUNT_FIELD needed to continue"
-fi
-
-if [ -z "$VAULT_GOLDEN_REGISTRY_PATH" ]; then
-    die "vault golden registry path VAULT_GOLDEN_REGISTRY_PATH needed to continue"
-fi
-
-if [ -z "$SOURCE_ACCOUNT_JSON_CREDS_PATH" ]; then
-    die "source account json creds path SOURCE_ACCOUNT_JSON_CREDS_PATH needed to continue"
-fi
-
-if [ -z "$DEST_ACCOUNT_JSON_CREDS_PATH" ]; then
-    die "dest account json creds path DEST_ACCOUNT_JSON_CREDS_PATH needed to continue"
-fi
+need_var "$APPROLE_ID" "APPROLE_ID"
+need_var "$APPROLE_SECRET_ID" "APPROLE_SECRET_ID"
+need_var "$VAULT_SOURCE_ACCOUNT_PATH" "VAULT_SOURCE_ACCOUNT_PATH"
+need_var "$VAULT_SOURCE_ACCOUNT" "VAULT_SOURCE_ACCOUNT"
+need_var "$VAULT_SOURCE_ACCOUNT_FIELD" "VAULT_SOURCE_ACCOUNT_FIELD"
+need_var "$VAULT_GOLDEN_REGISTRY_PATH" "VAULT_GOLDEN_REGISTRY_PATH"
+need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH" "SOURCE_ACCOUNT_JSON_CREDS_PATH"
+need_var "$DEST_ACCOUNT_JSON_CREDS_PATH" "DEST_ACCOUNT_JSON_CREDS_PATH"
 
 VAULT_TOKEN=$(curl -s --request POST --data '{"role_id":"'"$APPROLE_ID"'","secret_id":"'"$APPROLE_SECRET_ID"'"}' "$VAULT_ADDR"/v1/auth/approle/login | jq -r '.auth.client_token')
 
