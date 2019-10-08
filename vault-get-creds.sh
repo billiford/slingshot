@@ -18,6 +18,8 @@ need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH" "SOURCE_ACCOUNT_JSON_CREDS_PATH"
 
 VAULT_SOURCE_ACCOUNT=$(echo "$SRC_IMG" | cut -d"/" -f2)
 
+test -z "$VAULT_SOURCE_ACCOUNT" && die "could not retrieve project from source image"
+
 VAULT_TOKEN=$(curl -s --request POST --data '{"role_id":"'"$APPROLE_ID"'","secret_id":"'"$APPROLE_SECRET_ID"'"}' "$VAULT_ADDR"/v1/auth/approle/login | jq -r '.auth.client_token')
 
 if [ -z "$VAULT_TOKEN" ]; then
