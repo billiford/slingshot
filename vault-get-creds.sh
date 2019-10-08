@@ -5,15 +5,18 @@ need "jq"
 need "curl"
 need "vault" #just for giggles
 
+
+need_var "$SRC_IMG" "SRC_IMG"
 need_var "$APPROLE_ID" "APPROLE_ID"
 need_var "$VAULT_ADDR" "VAULT_ADDR"
 need_var "$APPROLE_SECRET_ID" "APPROLE_SECRET_ID"
 need_var "$VAULT_SOURCE_ACCOUNT_PATH" "VAULT_SOURCE_ACCOUNT_PATH"
-need_var "$VAULT_SOURCE_ACCOUNT" "VAULT_SOURCE_ACCOUNT"
 need_var "$VAULT_SOURCE_ACCOUNT_FIELD" "VAULT_SOURCE_ACCOUNT_FIELD"
 need_var "$VAULT_GOLDEN_REGISTRY_PATH" "VAULT_GOLDEN_REGISTRY_PATH"
-need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH" "SOURCE_ACCOUNT_JSON_CREDS_PATH"
 need_var "$DEST_ACCOUNT_JSON_CREDS_PATH" "DEST_ACCOUNT_JSON_CREDS_PATH"
+need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH" "SOURCE_ACCOUNT_JSON_CREDS_PATH"
+
+VAULT_SOURCE_ACCOUNT=$(echo "$SRC_IMG" | cut -d"/" -f2)
 
 VAULT_TOKEN=$(curl -s --request POST --data '{"role_id":"'"$APPROLE_ID"'","secret_id":"'"$APPROLE_SECRET_ID"'"}' "$VAULT_ADDR"/v1/auth/approle/login | jq -r '.auth.client_token')
 
