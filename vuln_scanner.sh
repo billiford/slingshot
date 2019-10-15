@@ -33,4 +33,4 @@ gcloud beta container images describe "$STAGING_IMAGE" --show-package-vulnerabil
 
 error_check "$?" "gcloud image describe"
 
-"$SCRIPT_LOC"/vulnerability_parser ./vulnerability_scan.json
+"$SCRIPT_LOC"/bin/vulnerability_parser ./vulnerability_scan.json
