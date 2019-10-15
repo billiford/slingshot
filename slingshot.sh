@@ -172,3 +172,4 @@ error_check "$?" "gcloud service-account auth"
 #push to destination registry
 print_message "pushing docker image to destination registry"
 docker push "${DEST_IMAGE}" || die "Could not push image from docker repo"
+echo "SPINNAKER_PROPERTY_GOLDEN_IMAGE=${DEST_IMAGE}"
