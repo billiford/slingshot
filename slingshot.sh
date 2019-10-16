@@ -174,4 +174,4 @@ print_message "pushing docker image to destination registry"
 docker push "${DEST_IMAGE}" || die "Could not push image from docker repo"
 
 # print_message "SPINNAKER_PROPERTY_GOLDEN_IMAGE=${DEST_IMAGE}"
-print_message SPINNAKER_CONFIG_JSON={"GOLDEN_IMAGE": "$DEST_IMAGE"}
+echo SPINNAKER_PROPERTY_GOLDEN_IMAGE="$DEST_IMAGE"
