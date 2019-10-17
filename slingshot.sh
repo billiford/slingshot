@@ -91,12 +91,13 @@ cleanup() {
 #   done
 # }
 
-need "iptables"
 
 SCRIPT_LOC=$(cd "$(dirname "$0")"; pwd -P)
 . $SCRIPT_LOC/common_functions.sh
 
 shopt -s extglob
+
+need "iptables"
 
 trap cleanup EXIT
 
