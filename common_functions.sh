@@ -22,3 +22,14 @@ error_check() {
 need() {
   which "$1" 1>/dev/null || apk add "$1" || die "$1"
 }
+
+start_server() {
+  nohup dockerd > server_start.log  2>&1 &
+  cat server_start.log
+
+  print_message "checking if process is running"
+  sleep 2
+  docker info
+  error_check $?
+  print_message "SERVER SUCCESSFULLY STARTED AND RUNNING"
+}
