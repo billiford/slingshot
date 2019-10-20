@@ -24,6 +24,7 @@ need() {
 }
 
 start_server() {
+  which dockerd
   nohup dockerd > server_start.log  2>&1 &
   cat server_start.log
 
