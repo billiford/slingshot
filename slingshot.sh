@@ -78,20 +78,6 @@ cleanup() {
   curl -s $KILL_HOST/kill
 }
 
-# check_docker_server_health() {
-#   EXIT_CODE=1
-#   i=0
-#   while [ "${EXIT_CODE}" -ne 0 ]
-#   do
-#     sleep 2
-#     echo "Attempt $i to connect to docker daemon"
-#     nc localhost 2375 -v
-#     EXIT_CODE=$?
-#     i=$((i + 1))
-#   done
-# }
-
-
 SCRIPT_LOC=$(cd "$(dirname "$0")"; pwd -P)
 . $SCRIPT_LOC/common_functions.sh
 
@@ -102,9 +88,6 @@ need "iptables"
 trap cleanup EXIT
 
 start_server
-
-# print_message "checking if docker server is online"
-# check_docker_server_health
 
 DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
 
@@ -138,30 +121,10 @@ done
 
 test "$STAGING" && DEST_IMAGE="$DEST_IMAGE-staging"
 
-#construct the staging source image if we are pulling from staging registry
-if ! [ $STAGING ]
-then
-  STAGING_PROJECT=${STAGING_PROJECT:-"np-platforms-gcr-thd"}
-  STAGING_IMAGE="us.gcr.io/$STAGING_PROJECT"
-
-  #construct STAGING_image for retagging
-  IFS='/'
-  read -a IMG_ARR <<< "${SRC_IMG}"
-  IFS=' '
-
-  for i in ${IMG_ARR[@]:1}
-  do
-    STAGING_IMAGE="$STAGING_IMAGE/$i"
-  done
-
-  STAGING_IMAGE="$STAGING_IMAGE-staging"
-  SRC_IMG="$STAGING_IMAGE"
-fi
-
-
 #activate gcloud service account
 gcloud auth activate-service-account --key-file="$SOURCE_ACCOUNT_JSON_CREDS_PATH"
 error_check "$?" "gcloud service-account auth"
+
 #pull down image from source location
 print_message "pulling $SRC_IMG"
 docker pull $SRC_IMG || die "Could not pull image from docker repo"
