@@ -30,6 +30,6 @@ start_server() {
 
   print_message "checking if process is running"
   docker info
-  error_check $?
+  error_check $? "docker server online check"
   print_message "SERVER SUCCESSFULLY STARTED AND RUNNING"
 }
