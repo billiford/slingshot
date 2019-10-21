@@ -119,7 +119,13 @@ do
   DEST_IMAGE="$DEST_IMAGE/$i"
 done
 
-test "$STAGING" && DEST_IMAGE="$DEST_IMAGE-staging"
+#if we're staging the image, append '-staging' to the image, otherwise remove the suffix '-staging'
+if [ "$STAGING" = "true" ]
+then
+  DEST_IMAGE="$DEST_IMAGE-staging"
+elif
+  DEST_IMAGE="${DEST_IMAGE%-staging}"
+fi
 
 #activate gcloud service account
 gcloud auth activate-service-account --key-file="$SOURCE_ACCOUNT_JSON_CREDS_PATH"
