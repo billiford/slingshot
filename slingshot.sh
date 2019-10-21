@@ -89,11 +89,15 @@ trap cleanup EXIT
 
 start_server
 
-DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
-
 test "$STAGING" && DEST_REGION="us.gcr.io" || DEST_REGION="gcr.io"
-DEST_REGISTRY="$DEST_REGION/$DEST_PROJECT"
-DEST_IMAGE="$DEST_REGISTRY"
+
+DEST_IMAGE="$DEST_REGION"
+
+if [ "$STAGING" = "true" ]
+then
+  DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
+  DEST_IMAGE="$DEST_IMAGE/$DEST_PROJECT"
+fi
 
 #SRC_IMG from one of the parameters from the spinnaker pipeline
 case "$SRC_IMG" in
