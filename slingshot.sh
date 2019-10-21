@@ -123,7 +123,7 @@ done
 if [ "$STAGING" = "true" ]
 then
   DEST_IMAGE="$DEST_IMAGE-staging"
-elif
+else
   DEST_IMAGE="${DEST_IMAGE%-staging}"
 fi
 
