@@ -78,28 +78,33 @@ cleanup() {
   curl -s $KILL_HOST/kill
 }
 
-check_docker_server_health() {
-  EXIT_CODE=1
-  i=0
-  while [ "${EXIT_CODE}" -ne 0 ]
-  do
-    sleep 2
-    echo "Attempt $i to connect to docker daemon"
-    nc localhost 2375 -v
-    EXIT_CODE=$?
-    i=$((i + 1))
-  done
-}
+# check_docker_server_health() {
+#   EXIT_CODE=1
+#   i=0
+#   while [ "${EXIT_CODE}" -ne 0 ]
+#   do
+#     sleep 2
+#     echo "Attempt $i to connect to docker daemon"
+#     nc localhost 2375 -v
+#     EXIT_CODE=$?
+#     i=$((i + 1))
+#   done
+# }
+
 
 SCRIPT_LOC=$(cd "$(dirname "$0")"; pwd -P)
 . $SCRIPT_LOC/common_functions.sh
 
 shopt -s extglob
 
+need "iptables"
+
 trap cleanup EXIT
 
-print_message "checking if docker server is online"
-check_docker_server_health
+start_server
+
+# print_message "checking if docker server is online"
+# check_docker_server_health
 
 DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
 
