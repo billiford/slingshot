@@ -89,15 +89,10 @@ trap cleanup EXIT
 
 start_server
 
-test "$STAGING" && DEST_REGION="us.gcr.io" || DEST_REGION="gcr.io"
-
+# test "$STAGING" && DEST_REGION="us.gcr.io" || DEST_REGION="gcr.io"
+DEST_REGION="gcr.io"
 DEST_IMAGE="$DEST_REGION"
 
-if [ "$STAGING" = "true" ]
-then
-  DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
-  DEST_IMAGE="$DEST_IMAGE/$DEST_PROJECT"
-fi
 
 #SRC_IMG from one of the parameters from the spinnaker pipeline
 case "$SRC_IMG" in
@@ -109,7 +104,6 @@ case "$SRC_IMG" in
 esac
 
 need_var "$SRC_IMG" "SRC_IMG"
-need_var "$DEST_IMAGE" "DEST_IMAGE"
 need_var "$SOURCE_ACCOUNT_JSON_CREDS_PATH" "SOURCE_ACCOUNT_JSON_CREDS_PATH"
 need_var "$DEST_ACCOUNT_JSON_CREDS_PATH" "DEST_ACCOUNT_JSON_CREDS_PATH"
 
@@ -122,14 +116,6 @@ for i in ${IMG_ARR[@]:1}
 do
   DEST_IMAGE="$DEST_IMAGE/$i"
 done
-
-#if we're staging the image, append '-staging' to the image, otherwise remove the suffix '-staging'
-if [ "$STAGING" = "true" ]
-then
-  DEST_IMAGE="$DEST_IMAGE-staging"
-else
-  DEST_IMAGE="${DEST_IMAGE%-staging}"
-fi
 
 #activate gcloud service account
 gcloud auth activate-service-account --key-file="$SOURCE_ACCOUNT_JSON_CREDS_PATH"
@@ -151,5 +137,10 @@ error_check "$?" "gcloud service-account auth"
 print_message "pushing docker image to destination registry"
 docker push "${DEST_IMAGE}" || die "Could not push image from docker repo"
 
-# print_message "SPINNAKER_PROPERTY_GOLDEN_IMAGE=${DEST_IMAGE}"
+#Vulnerability Scanning
+gcloud beta container images describe "${DEST_IMAGE}" --show-package-vulnerability --format=json > "vulnerability_scan.json"
+error_check "$?" "gcloud image describe"
+bash "$SCRIPT_LOC"/bin/vulnerability_parser ./vulnerability_scan.json
+
+#echo out properties to be caught by spinnaker
 echo SPINNAKER_PROPERTY_GOLDEN_IMAGE="$DEST_IMAGE"
