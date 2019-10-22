@@ -24,6 +24,7 @@ need() {
 }
 
 start_server() {
+  print_message "STARTING DOCKER DAEMON"
   nohup dockerd > server_start.log  2>&1 &
   sleep 3
   cat server_start.log

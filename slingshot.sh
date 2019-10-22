@@ -91,8 +91,8 @@ start_server
 
 # test "$STAGING" && DEST_REGION="us.gcr.io" || DEST_REGION="gcr.io"
 DEST_REGION="gcr.io"
-DEST_IMAGE="$DEST_REGION"
-
+DEST_PROJECT=${DEST_PROJECT:-"np-platforms-gcr-thd"}
+DEST_IMAGE="$DEST_REGION/$DEST_PROJECT"
 
 #SRC_IMG from one of the parameters from the spinnaker pipeline
 case "$SRC_IMG" in
