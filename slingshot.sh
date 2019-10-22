@@ -140,7 +140,8 @@ docker push "${DEST_IMAGE}" || die "Could not push image from docker repo"
 #Vulnerability Scanning
 gcloud beta container images describe "${DEST_IMAGE}" --show-package-vulnerability --format=json > "vulnerability_scan.json"
 error_check "$?" "gcloud image describe"
-bash "$SCRIPT_LOC"/bin/vulnerability_parser ./vulnerability_scan.json
+sh "$SCRIPT_LOC"/bin/vulnerability_parser ./vulnerability_scan.json
+error_check "$?" "Container Analysis"
 
 #echo out properties to be caught by spinnaker
 echo SPINNAKER_PROPERTY_GOLDEN_IMAGE="$DEST_IMAGE"
